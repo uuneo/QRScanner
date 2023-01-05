@@ -1,6 +1,7 @@
 # QRScanner
 A simple QR Code scanner framework for iOS. Provides a similar scan effect to ios13+. Written in Swift.
 
+
 * [日本語のブログ](https://tech.mercari.com/entry/2019/12/12/094129)
 
 |iOS 13.0+| Use QRScanner in iOS 10.0+|
@@ -15,18 +16,18 @@ A simple QR Code scanner framework for iOS. Provides a similar scan effect to io
 - Support from iOS 10.0+
 
 ## Development Requirements
-- iOS 10.0+
-- Swift: 5.4.2
-- Xcode Version: 13.0
+- iOS 11.0+ / Swift: 5.7.1
+- iOS 13.0+ / SwiftUI
+- Xcode Version: 14.1
 
 ## Installation
-<a href="http://cocoapods.org/" target="_blank">CocoaPods</a> is the recommended method of installing QRScanner.
+QRScanner supports multiple methods for installing the library in a project.
 
-### The Pod Way
+### Installation with CocoaPods
 
-- Simply add the following line to your <code>Podfile</code>
+- To integrate QRScanner into your Xcode project using CocoaPods, specify it in your <code>Podfile</code>
 ```ruby
-  platform :ios, '10.0'
+  platform :ios, '11.0'
   pod 'MercariQRScanner'
 ```
 
@@ -39,32 +40,27 @@ A simple QR Code scanner framework for iOS. Provides a similar scan effect to io
   import MercariQRScanner
 ```
 
-### The Carthage Way
+### Installation with Swift Package Manager
 
-- Move your project dir and create Cartfile
+Once you have your Swift package set up, adding QRScanner as a dependency is as easy as adding it to the dependencies value of your <code>Package.swift</code>.
 ```
-> touch Cartfile
+dependencies: [
+    .package(url: "https://github.com/mercari/QRScanner.git", .upToNextMajor(from: "1.9.0"))
+]
 ```
-- add the following line to Cartfile
+
+- Write Import statement on your source file
+```swift
+import QRScanner
+```
+
+### Installation with Carthage
+
+- To integrate QRScanner, add the following to your <code>Cartfile</code>.
 ```
 github "mercari/QRScanner"
 ```
-- Create framework
-```
-> carthage update --platform iOS
-```
-
-- In Xcode, move to "General > Build Phase > Linked Frameworks and Libraries"
-- Add the framework to your project
-- Add a new run script and put the following code
-```
-/usr/local/bin/carthage copy-frameworks
-```
-- Click "+" at Input file and Add the framework path
-```
-$(SRCROOT)/Carthage/Build/iOS/QRScanner.framework
-```
-+ Write Import statement on your source file
+- Write Import statement on your source file
 ```swift
 import QRScanner
 ```
@@ -159,6 +155,71 @@ override func viewDidLoad() {
 |Setup Custom Class|Customize|
 |-|-|
 |<img src="https://raw.githubusercontent.com/mercari/QRScanner/master/images/ib2.png" width="350">|<img src="https://raw.githubusercontent.com/mercari/QRScanner/master/images/ib1.png" width="350">|
+
+
+### SwiftUI
+
+```swift
+import QRScanner
+import SwiftUI
+
+struct ScanView1: View {
+
+	@Environment(\.dismiss) var dismiss
+
+	@State private var torchIsOn = false
+	@State private var restart = false
+	@State private var showActive = false
+	@State private var code = ""
+	@State private var status:AVAuthorizationStatus = .authorized
+	var body: some View {
+		ZStack{
+			QRScanner(restart: $restart, flash: $torchIsOn) { code in
+				debugPrint(code)
+				self.code = code
+				self.showActive = true
+			} fail: { error in
+				switch error{
+					case .unauthorized(let status):
+						self.status = status
+					default:
+						break
+				}
+			}.actionSheet(isPresented: $showActive) {
+
+
+				ActionSheet(title: Text( "Result: \(code)" ),buttons: [
+
+					.default(Text( "Restart"), action: {
+						self.restart.toggle()
+						self.showActive = false
+					}),
+
+						.cancel({
+							self.dismiss()
+						})
+				])
+			}
+
+			VStack{
+				Spacer()
+				Button{
+					self.torchIsOn.toggle()
+				}label: {
+					Image(systemName: "flashlight.\(torchIsOn ? "on" : "off").circle")
+						.font(.system(size: 50))
+						.padding(.bottom, 80)
+				}
+
+			}
+		}
+	}
+
+}
+
+```
+
+
 
 ### Add FlashButton
 

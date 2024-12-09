@@ -1,6 +1,7 @@
 # QRScanner
 A simple QR Code scanner framework for iOS. Provides a similar scan effect to ios13+. Written in Swift.
 
+
 * [日本語のブログ](https://tech.mercari.com/entry/2019/12/12/094129)
 
 |iOS 13.0+| Use QRScanner in iOS 10.0+|
@@ -15,8 +16,8 @@ A simple QR Code scanner framework for iOS. Provides a similar scan effect to io
 - Support from iOS 10.0+
 
 ## Development Requirements
-- iOS 11.0+
-- Swift: 5.7.1
+- iOS 11.0+ / Swift: 5.7.1
+- iOS 13.0+ / SwiftUI
 - Xcode Version: 14.1
 
 ## Installation
@@ -154,6 +155,71 @@ override func viewDidLoad() {
 |Setup Custom Class|Customize|
 |-|-|
 |<img src="https://raw.githubusercontent.com/mercari/QRScanner/master/images/ib2.png" width="350">|<img src="https://raw.githubusercontent.com/mercari/QRScanner/master/images/ib1.png" width="350">|
+
+
+### SwiftUI
+
+```swift
+import QRScanner
+import SwiftUI
+
+struct ScanView1: View {
+
+	@Environment(\.dismiss) var dismiss
+
+	@State private var torchIsOn = false
+	@State private var restart = false
+	@State private var showActive = false
+	@State private var code = ""
+	@State private var status:AVAuthorizationStatus = .authorized
+	var body: some View {
+		ZStack{
+			QRScanner(restart: $restart, flash: $torchIsOn) { code in
+				debugPrint(code)
+				self.code = code
+				self.showActive = true
+			} fail: { error in
+				switch error{
+					case .unauthorized(let status):
+						self.status = status
+					default:
+						break
+				}
+			}.actionSheet(isPresented: $showActive) {
+
+
+				ActionSheet(title: Text( "Result: \(code)" ),buttons: [
+
+					.default(Text( "Restart"), action: {
+						self.restart.toggle()
+						self.showActive = false
+					}),
+
+						.cancel({
+							self.dismiss()
+						})
+				])
+			}
+
+			VStack{
+				Spacer()
+				Button{
+					self.torchIsOn.toggle()
+				}label: {
+					Image(systemName: "flashlight.\(torchIsOn ? "on" : "off").circle")
+						.font(.system(size: 50))
+						.padding(.bottom, 80)
+				}
+
+			}
+		}
+	}
+
+}
+
+```
+
+
 
 ### Add FlashButton
 

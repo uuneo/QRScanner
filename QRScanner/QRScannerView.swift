@@ -53,7 +53,7 @@ public class QRScannerView: UIView {
     public var focusImagePadding: CGFloat = 8.0
 
     @IBInspectable
-    public var animationDuration: Double = 0.5
+    public var animationDuration: Double = 0.2
 
     @IBInspectable
     public var isBlurEffectEnabled: Bool = false

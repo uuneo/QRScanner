@@ -99,7 +99,7 @@ public class QRScannerViewController: UIViewController , QRScannerViewDelegate{
 
 	public func qrScannerView(_ qrScannerView: QRScannerView, didSuccess code: String) {
 		DispatchQueue.main.async {
-            AudioServicesPlaySystemSound(1000)
+            AudioServicesPlaySystemSound(1108)
 			self.success?(code)
 		}
 	}

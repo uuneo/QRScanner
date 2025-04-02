@@ -67,7 +67,7 @@ public class QRScannerViewController: UIViewController , QRScannerViewDelegate{
 	public override func viewDidLoad() {
 		super.viewDidLoad()
         
-        if let audio = Bundle.main.url(forResource: "scan", withExtension: "caf"){
+        if let audio = Bundle.main.url(forResource: "scan", withExtension: "wav"){
             AudioServicesCreateSystemSoundID(audio as CFURL, &self.soundID)
         }
         

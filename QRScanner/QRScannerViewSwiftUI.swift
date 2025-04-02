@@ -61,9 +61,16 @@ public class QRScannerViewController: UIViewController , QRScannerViewDelegate{
 	var fail:((QRScannerError)->Void)?
 
 	var QRView = QRScannerView()
+    
+    var soundID: SystemSoundID = 0
 
 	public override func viewDidLoad() {
 		super.viewDidLoad()
+        
+        if let audio = Bundle.main.url(forResource: "scan", withExtension: "caf"){
+            AudioServicesCreateSystemSoundID(audio as CFURL, &self.soundID)
+        }
+        
 		QRView.frame = view.bounds
 		view.addSubview(QRView)
 		QRView.configure(delegate: self, input: .init( isBlurEffectEnabled: true))
@@ -96,6 +103,7 @@ public class QRScannerViewController: UIViewController , QRScannerViewDelegate{
 
 	public func qrScannerView(_ qrScannerView: QRScannerView, didSuccess code: String) {
 		DispatchQueue.main.async {
+            AudioServicesPlaySystemSoundWithCompletion(self.soundID){}
 			self.success?(code)
 		}
 	}

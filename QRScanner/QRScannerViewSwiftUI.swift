@@ -10,7 +10,7 @@
 //  Created by uuneo on 2024/12/9.
 import SwiftUI
 import AVFoundation
-
+import AudioToolbox
 
 @available(iOS 13.0, *)
 public struct QRScanner: UIViewControllerRepresentable {

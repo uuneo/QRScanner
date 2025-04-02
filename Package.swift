@@ -21,6 +21,9 @@ let package = Package(
             path: "QRScanner",
             exclude: [
                 "Info.plist",
+            ],
+            resources: [
+                .process("Sounds") 
             ]
         ),
     ]
